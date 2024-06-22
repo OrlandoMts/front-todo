@@ -1,2 +1,5 @@
 /dist
 /node_modules
+
+src/styles.scss
+tailwind.config.js
