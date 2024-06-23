@@ -1,11 +1,54 @@
-<h2>Login</h2>
-<form (submit)="login()">
-  <label for="username">Username</label>
-  <input type="text" [(ngModel)]="username" name="username" required />
-
-  <label for="password">Password</label>
-  <input type="password" [(ngModel)]="password" name="password" required />
-
-  <button type="submit">Login</button>
-</form>
+<div class="flex justify-center items-center min-h-screen bg-gray-100">
+	<form
+		[formGroup]="frmData"
+		(ngSubmit)="login()"
+		class="bg-white p-8 rounded shadow-md w-full max-w-sm">
+		<div class="mb-4">
+			<label for="username" class="block text-gray-700 text-sm font-bold mb-2"
+				>Nombre de usuario</label
+			>
+			<input
+				type="text"
+				id="username"
+				formControlName="username"
+				class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+			@if(frmData.get('username')?.invalid && frmData.get('username')?.touched)
+			{
+			<div class="text-red-500 text-xs italic">Campo requerido.</div>
+			}
+		</div>
+		<div class="mb-6">
+			<label for="password" class="block text-gray-700 text-sm font-bold mb-2"
+				>Contraseña</label
+			>
+			<input
+				type="password"
+				id="password"
+				formControlName="password"
+				class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+			@if (frmData.get('password')?.invalid && frmData.get('password')?.touched)
+			{ @if (frmData.controls['password'].errors!['required']) {
+			<span class="text-red-500 text-xs italic">Campo requerido.</span>
+			} @if (frmData.controls['password'].errors!['passwordStrength']) {
+			<p class="text-red-500 text-xs italic">
+				La contraseña debe tener minimo 8 caracteres
+			</p>
+			<p class="text-red-500 text-xs italic">
+				La contraseña debe tener una letra minúscula y una mayúscula
+			</p>
+			<p class="text-red-500 text-xs italic">
+				La contraseña debe tener un número y un simbolo
+			</p>
+			} }
+		</div>
+		<div class="flex items-center justify-between">
+			<button
+				type="submit"
+				[disabled]="frmData.invalid"
+				class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+				Ingresar
+			</button>
+		</div>
+	</form>
+</div>
 <a routerLink="/signup">Don't have an account? Register</a>
