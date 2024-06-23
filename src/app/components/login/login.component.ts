@@ -3,19 +3,17 @@ import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import {
 	FormBuilder,
 	FormGroup,
-	FormsModule,
 	ReactiveFormsModule,
 	Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@src/app/services';
-import { passwordValidator } from '@src/app/validators';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
 	selector: 'app-login',
 	standalone: true,
-	imports: [FormsModule, RouterLink, ReactiveFormsModule, JsonPipe],
+	imports: [RouterLink, ReactiveFormsModule, JsonPipe],
 	templateUrl: './login.component.html',
 	styles: ``,
 })
@@ -27,7 +25,7 @@ export class LoginComponent implements OnInit {
 	private _onDestroy$ = new Subject<void>();
 	public frmData: FormGroup = this._fb.group({
 		username: ['', [Validators.required]],
-		password: ['', [Validators.required, passwordValidator()]],
+		password: ['', [Validators.required]],
 	});
 
 	ngOnInit(): void {

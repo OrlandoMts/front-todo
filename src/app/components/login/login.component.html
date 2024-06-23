@@ -12,9 +12,10 @@
 				id="username"
 				formControlName="username"
 				class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
-			@if(frmData.get('username')?.invalid && frmData.get('username')?.touched)
-			{
-			<div class="text-red-500 text-xs italic">Campo requerido.</div>
+			@if (
+				frmData.get('username')?.invalid && frmData.get('username')?.touched
+			) {
+				<div class="text-red-500 text-xs italic">Campo requerido.</div>
 			}
 		</div>
 		<div class="mb-6">
@@ -26,20 +27,13 @@
 				id="password"
 				formControlName="password"
 				class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
-			@if (frmData.get('password')?.invalid && frmData.get('password')?.touched)
-			{ @if (frmData.controls['password'].errors!['required']) {
-			<span class="text-red-500 text-xs italic">Campo requerido.</span>
-			} @if (frmData.controls['password'].errors!['passwordStrength']) {
-			<p class="text-red-500 text-xs italic">
-				La contraseña debe tener minimo 8 caracteres
-			</p>
-			<p class="text-red-500 text-xs italic">
-				La contraseña debe tener una letra minúscula y una mayúscula
-			</p>
-			<p class="text-red-500 text-xs italic">
-				La contraseña debe tener un número y un simbolo
-			</p>
-			} }
+			@if (
+				frmData.get('password')?.invalid && frmData.get('password')?.touched
+			) {
+				@if (frmData.controls['password'].errors!['required']) {
+					<span class="text-red-500 text-xs italic">Campo requerido.</span>
+				}
+			}
 		</div>
 		<div class="flex items-center justify-between">
 			<button

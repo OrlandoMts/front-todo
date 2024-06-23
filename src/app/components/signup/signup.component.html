@@ -1,14 +1,79 @@
-<h2>Signup</h2>
-<form (submit)="signup()">
-	<label for="username">Username</label>
-	<input type="text" [(ngModel)]="username" name="username" required />
-
-	<label for="email">Email</label>
-	<input type="email" [(ngModel)]="email" name="email" required />
-
-	<label for="password">Password</label>
-	<input type="password" [(ngModel)]="password" name="password" required />
-
-	<button type="submit">Register</button>
-</form>
+<div class="flex justify-center items-center min-h-screen bg-gray-100">
+	<form
+		[formGroup]="frmData"
+		(ngSubmit)="signup()"
+		class="bg-white p-8 rounded shadow-md w-full max-w-sm">
+		<div class="mb-4">
+			<label for="username" class="block text-gray-700 text-sm font-bold mb-2"
+				>Nombre de usuario</label
+			>
+			<input
+				type="text"
+				id="username"
+				formControlName="username"
+				class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+			@if (
+				frmData.get('username')?.invalid && frmData.get('username')?.touched
+			) {
+				<div class="text-red-500 text-xs italic">Campo requerido.</div>
+			}
+		</div>
+		<div class="mb-4">
+			<label for="email" class="block text-gray-700 text-sm font-bold mb-2"
+				>Correo</label
+			>
+			<input
+				type="email"
+				id="email"
+				formControlName="email"
+				class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+			@if (frmData.get('email')?.invalid && frmData.get('email')?.touched) {
+				<div class="text-red-500 text-xs italic">
+					@if (frmData.controls['email'].errors!['required']) {
+						<span>Campo requiredo.</span>
+					}
+					@if (frmData.controls['email'].errors!['email']) {
+						<span>Email no valido.</span>
+					}
+				</div>
+			}
+		</div>
+		<div class="mb-6">
+			<label for="password" class="block text-gray-700 text-sm font-bold mb-2"
+				>Contraseña</label
+			>
+			<input
+				type="password"
+				id="password"
+				formControlName="password"
+				class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+			@if (
+				frmData.get('password')?.invalid && frmData.get('password')?.touched
+			) {
+				@if (frmData.controls['password'].errors!['required']) {
+					<span class="text-red-500 text-xs italic">Campo requerido.</span>
+				}
+				@if (frmData.controls['password'].errors!['passwordStrength']) {
+					<p class="text-red-500 text-xs italic">
+						La contraseña debe tener minimo 8 caracteres
+					</p>
+					<p class="text-red-500 text-xs italic">
+						La contraseña debe tener una letra minúscula y una mayúscula
+					</p>
+					<p class="text-red-500 text-xs italic">
+						La contraseña debe tener un número y un simbolo
+					</p>
+				}
+			}
+		</div>
+		<div class="flex items-center justify-between">
+			<button
+				type="submit"
+				[disabled]="frmData.invalid"
+				class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+				Crear cuenta
+			</button>
+		</div>
+	</form>
+</div>
 <a routerLink="/login">Already have an account? Login</a>
