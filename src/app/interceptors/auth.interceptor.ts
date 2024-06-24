@@ -8,6 +8,7 @@ let isRefreshing = false;
 const refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<
 	string | null
 >(null);
+const AUTH_API_URLS = ['/login', '/signup', '/refresh'];
 
 export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
 	const authService = inject(AuthService);
@@ -15,7 +16,7 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
 
 	let authReq = req;
 
-	if (accessToken) {
+	if (accessToken && !AUTH_API_URLS.some(url => req.url.includes(url))) {
 		authReq = req.clone({
 			setHeaders: {
 				Authorization: `Bearer ${accessToken}`,
@@ -25,7 +26,11 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
 
 	return next(authReq).pipe(
 		catchError((error: HttpErrorResponse) => {
-			if (error.status === 401 && !authReq.url.includes('/auth/refresh')) {
+			if (
+				error.status === 401 &&
+				!req.url.includes('/refresh') &&
+				!AUTH_API_URLS.some(url => req.url.includes(url))
+			) {
 				if (!isRefreshing) {
 					isRefreshing = true;
 					refreshTokenSubject.next(null);
@@ -65,7 +70,7 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
 				}
 			}
 
-			return throwError(() => new Error(error.message));
+			return throwError(() => error);
 		}),
 		finalize(() => {
 			isRefreshing = false;

@@ -38,14 +38,14 @@ export class AuthService {
 					this.accessToken.next(data?.access_token);
 					localStorage.setItem('access_token', data?.access_token);
 				}),
-				catchError(err => of(err)),
 			);
 	}
 
 	signup(data: SignupItf): Observable<ResponseHttpItf<AuthItf>> {
-		return this.http
-			.post<ResponseHttpItf<AuthItf>>(`${this.api_url}/signup`, data)
-			.pipe(catchError(err => of(err)));
+		return this.http.post<ResponseHttpItf<AuthItf>>(
+			`${this.api_url}/signup`,
+			data,
+		);
 	}
 
 	logout(): void {

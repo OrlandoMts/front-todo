@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import {
 	FormBuilder,
@@ -6,9 +7,10 @@ import {
 	Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { AuthItf, ResponseHttpItf } from '@src/app/interfaces';
 import { AuthService } from '@src/app/services';
 import { passwordValidator } from '@src/app/validators';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, catchError, of, takeUntil } from 'rxjs';
 
 @Component({
 	selector: 'app-signup',
@@ -41,9 +43,24 @@ export class SignupComponent implements OnInit {
 	signup(): void {
 		this.authSrv
 			.signup(this.frmData.value)
-			.pipe(takeUntil(this._onDestroy$))
-			.subscribe(() => {
-				this.router.navigate(['/login']);
+			.pipe(
+				takeUntil(this._onDestroy$),
+				catchError((error: HttpErrorResponse) => {
+					if (error.status === 400) {
+						console.log('Usuario y/o correo no disponible');
+					} else {
+						console.log('Algo salio mal, contacta al administrador');
+					}
+					return of(error);
+				}),
+			)
+			.subscribe((res: ResponseHttpItf<AuthItf> | HttpErrorResponse) => {
+				if (
+					(res as ResponseHttpItf<AuthItf>)?.data?._id &&
+					(res as ResponseHttpItf<AuthItf>)?.data?._id?.length > 0
+				) {
+					this.router.navigate(['/login']);
+				}
 			});
 	}
 }

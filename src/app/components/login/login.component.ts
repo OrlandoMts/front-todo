@@ -1,4 +1,5 @@
 import { JsonPipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import {
 	FormBuilder,
@@ -7,8 +8,9 @@ import {
 	Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { AccessTokenItf, ResponseHttpItf } from '@src/app/interfaces';
 import { AuthService } from '@src/app/services';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, catchError, of, takeUntil } from 'rxjs';
 
 @Component({
 	selector: 'app-login',
@@ -40,9 +42,25 @@ export class LoginComponent implements OnInit {
 	login(): void {
 		this.authSrv
 			.login(this.frmData.value)
-			.pipe(takeUntil(this._onDestroy$))
-			.subscribe(() => {
-				this.router.navigate(['/profile']);
+			.pipe(
+				takeUntil(this._onDestroy$),
+				catchError((error: HttpErrorResponse) => {
+					if (error.status === 401) {
+						console.log('Verifique sus credenciales');
+					} else {
+						console.log('Algo salio mal, contacta al administrador');
+					}
+					return of(error);
+				}),
+			)
+			.subscribe((res: ResponseHttpItf<AccessTokenItf> | HttpErrorResponse) => {
+				if (
+					(res as ResponseHttpItf<AccessTokenItf>)?.data?.access_token &&
+					(res as ResponseHttpItf<AccessTokenItf>)?.data?.access_token?.length >
+						0
+				) {
+					this.router.navigate(['/profile']);
+				}
 			});
 	}
 }
