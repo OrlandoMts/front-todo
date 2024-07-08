@@ -1,17 +1,44 @@
 import { Routes } from '@angular/router';
-import {
-	LoginComponent,
-	ProfileComponent,
-	SignupComponent,
-} from '@components/index';
-import { AuthCallbackComponent } from './components/auth-callback/auth-calbback.component';
+import { ProfileComponent } from '@components/index';
+import { HomeComponent } from './components/home/home.component';
+import { LayoutComponent } from './components/layout/layout.component';
 import { authGuard } from './guards/auth.guard';
 
 export const AppRoutes: Routes = [
-	{ path: 'login', component: LoginComponent },
-	{ path: 'auth-callback', component: AuthCallbackComponent },
-	{ path: 'signup', component: SignupComponent },
-	{ path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
+	{
+		path: '',
+		component: HomeComponent,
+	},
+	{
+		path: 'login',
+		loadComponent: () =>
+			import('./components/login/login.component').then(c => c.LoginComponent),
+	},
+	{
+		path: 'auth-callback',
+		loadComponent: () =>
+			import('./components/auth-callback/auth-calbback.component').then(
+				c => c.AuthCallbackComponent,
+			),
+	},
+	{
+		path: 'signup',
+		loadComponent: () =>
+			import('./components/signup/signup.component').then(
+				c => c.SignupComponent,
+			),
+	},
+	{
+		path: '',
+		component: LayoutComponent,
+		children: [
+			{
+				path: 'profile',
+				component: ProfileComponent,
+				canActivate: [authGuard],
+			},
+		],
+	},
 	{ path: '**', redirectTo: 'login' },
-	{ path: '', redirectTo: '/login', pathMatch: 'full' },
+	{ path: '', redirectTo: '', pathMatch: 'full' },
 ];
