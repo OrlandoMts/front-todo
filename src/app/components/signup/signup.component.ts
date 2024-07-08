@@ -10,6 +10,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthItf, ResponseHttpItf } from '@src/app/interfaces';
 import { AuthService } from '@src/app/services';
 import { passwordValidator } from '@src/app/validators';
+import { OAuthService } from 'angular-oauth2-oidc';
 import { Subject, catchError, of, takeUntil } from 'rxjs';
 
 @Component({
@@ -24,6 +25,7 @@ export class SignupComponent implements OnInit {
 	private router = inject(Router);
 	private _fb = inject(FormBuilder);
 	private authSrv = inject(AuthService);
+	private _oauthSrv = inject(OAuthService);
 	private _onDestroy$ = new Subject<void>();
 	public frmData: FormGroup = this._fb.group({
 		username: ['', [Validators.required]],
@@ -62,5 +64,9 @@ export class SignupComponent implements OnInit {
 					this.router.navigate(['/login']);
 				}
 			});
+	}
+
+	loginGoogle() {
+		this._oauthSrv.initLoginFlow();
 	}
 }

@@ -1,7 +1,7 @@
 <div class="flex justify-center items-center min-h-screen bg-gray-100">
 	<form
 		[formGroup]="frmData"
-		(ngSubmit)="login()"
+		(ngSubmit)="loginCommon()"
 		class="bg-white p-8 rounded shadow-md w-full max-w-sm">
 		<div class="mb-4">
 			<label for="username" class="block text-gray-700 text-sm font-bold mb-2"
@@ -43,12 +43,14 @@
 				Ingresar
 			</button>
 		</div>
+
 		<div class="mt-2 flex justify-end">
-			<asl-google-signin-button
-				type="standard"
-				size="large"
-				text="signin_with"
-				[width]="200"></asl-google-signin-button>
+			<button
+				(click)="loginGoogle()"
+				class="flex items-center px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
+				<span class="mr-2">Iniciar sesión</span
+				><i class="fa-brands fa-google"></i>
+			</button>
 		</div>
 		<div class="mt-2 flex justify-end">
 			<a class="underline ..." routerLink="/signup">Registrate aquí</a>

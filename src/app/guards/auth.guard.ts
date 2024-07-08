@@ -5,8 +5,9 @@ import {
 	Router,
 	RouterStateSnapshot,
 } from '@angular/router';
+import { OAuthService } from 'angular-oauth2-oidc';
 
-import { AuthService } from '@services/index';
+import { AuthService } from '../services';
 
 export const authGuard: CanActivateFn = (
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -14,10 +15,11 @@ export const authGuard: CanActivateFn = (
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	state: RouterStateSnapshot,
 ) => {
+	const oauthSrv = inject(OAuthService);
 	const authSrv = inject(AuthService);
 	const router = inject(Router);
 
-	if (authSrv.isAuthenticated()) {
+	if (oauthSrv.hasValidIdToken() || authSrv.isAuthenticated()) {
 		return true;
 	} else {
 		router.navigate(['/login']);
