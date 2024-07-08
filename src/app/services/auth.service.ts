@@ -41,6 +41,17 @@ export class AuthService {
 			);
 	}
 
+	googleLogin(token: string): Observable<any> {
+		console.log('token', token);
+		return this.http.get<any>(`${this.api_url}/google`).pipe(
+			tap((response: any) => {
+				console.log('hey', response);
+				this.accessToken.next(response.access_token);
+				localStorage.setItem('access_token', response.access_token);
+			}),
+		);
+	}
+
 	signup(data: SignupItf): Observable<ResponseHttpItf<AuthItf>> {
 		return this.http.post<ResponseHttpItf<AuthItf>>(
 			`${this.api_url}/signup`,
@@ -73,6 +84,10 @@ export class AuthService {
 				catchError(err => of(err)),
 			);
 	}
+
+	// refreshToken(): void {
+	//   this.authService.refreshAuthToken(GoogleLoginProvider.PROVIDER_ID);
+	// }
 
 	setAccessToken(accessToken: string): void {
 		this.accessToken.next(accessToken);

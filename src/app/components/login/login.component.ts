@@ -1,3 +1,8 @@
+import {
+	GoogleSigninButtonModule,
+	SocialAuthService,
+	SocialUser,
+} from '@abacritt/angularx-social-login';
 import { JsonPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
@@ -15,7 +20,12 @@ import { Subject, catchError, of, takeUntil } from 'rxjs';
 @Component({
 	selector: 'app-login',
 	standalone: true,
-	imports: [RouterLink, ReactiveFormsModule, JsonPipe],
+	imports: [
+		RouterLink,
+		ReactiveFormsModule,
+		JsonPipe,
+		GoogleSigninButtonModule,
+	],
 	templateUrl: './login.component.html',
 	styles: ``,
 })
@@ -24,17 +34,32 @@ export class LoginComponent implements OnInit {
 	private router = inject(Router);
 	private _fb = inject(FormBuilder);
 	private authSrv = inject(AuthService);
+	private socialAuthSrv = inject(SocialAuthService);
 	private _onDestroy$ = new Subject<void>();
 	public frmData: FormGroup = this._fb.group({
 		username: ['', [Validators.required]],
 		password: ['', [Validators.required]],
 	});
+	user!: SocialUser;
+	loggedIn!: boolean;
 
 	ngOnInit(): void {
 		this._desRef.onDestroy(() => {
 			if (!this._onDestroy$.closed) {
 				this._onDestroy$.next();
 				this._onDestroy$.complete();
+			}
+		});
+
+		this.socialAuthSrv.authState.subscribe(user => {
+			this.user = user;
+			this.loggedIn = user != null;
+
+			if (this.loggedIn) {
+				this.authSrv.googleLogin(user.idToken).subscribe(response => {
+					console.log(response);
+					// Manejar la respuesta de tu backend, probablemente guardar el token JWT
+				});
 			}
 		});
 	}
@@ -62,5 +87,9 @@ export class LoginComponent implements OnInit {
 					this.router.navigate(['/profile']);
 				}
 			});
+	}
+
+	signOut(): void {
+		this.socialAuthSrv.signOut();
 	}
 }
