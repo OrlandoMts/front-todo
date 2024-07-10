@@ -64,7 +64,6 @@ export class AuthService {
 			if (this.oauthService.hasValidIdToken()) {
 				this.exchangeTokenWithBackend().subscribe(
 					res => {
-						console.log(res);
 						localStorage.setItem('access_token', res?.data?.access_token);
 						this.router.navigate(['/profile']);
 					},
@@ -106,17 +105,6 @@ export class AuthService {
 					localStorage.setItem('access_token', data?.access_token);
 				}),
 			);
-	}
-
-	googleLogin(token: string): Observable<any> {
-		console.log('token', token);
-		return this.http.get<any>(`${this.api_url}/google`).pipe(
-			tap((response: any) => {
-				console.log('hey', response);
-				this.accessToken.next(response.access_token);
-				localStorage.setItem('access_token', response.access_token);
-			}),
-		);
 	}
 
 	logout(): void {

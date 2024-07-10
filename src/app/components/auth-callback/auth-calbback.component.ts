@@ -1,4 +1,3 @@
-// src/app/auth-callback/auth-callback.component.ts
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { AuthService } from '@src/app/services';
